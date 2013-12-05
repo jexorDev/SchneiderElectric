@@ -1,0 +1,120 @@
+CREATE TABLE User
+(
+	Id VARCHAR(50),
+	Password VARCHAR(128),
+	Fname VARCHAR(50),
+	Lname VARCHAR(50),
+	Session_exp DATETIME,
+
+	PRIMARY KEY(Id)
+);
+
+CREATE TABLE Subcategory
+(
+	Id INT,
+	Name VARCHAR(50),
+
+	PRIMARY KEY(Id)
+);
+
+CREATE TABLE Tag
+(
+	Number INT,
+	Revision INT AUTO_INCREMENT,
+	Date DATE,
+	Labor_cost FLOAT NOT NULL,
+	Engineering_cost FLOAT NOT NULL,
+	Lead_time int,
+	Price_expires DATE,
+	Tag_notes VARCHAR(256),
+	Tag_desc VARCHAR(256),
+	Material_cost FLOAT NOT NULL,
+	Price_notes VARCHAR(256),
+	Install_cost FLOAT NOT NULL,
+	Cat_id INT,
+	Complexity_id INT,
+	Created_by VARCHAR(50),
+
+	
+	PRIMARY KEY(Number, Revision),
+	FOREIGN KEY(Created_by) REFERENCES User(Id),
+	FOREIGN KEY(Cat_id) REFERENCES Subcategory(Id),
+	FOREIGN KEY(Complexity_id) REFERENCES Complexity(Id)
+);
+
+CREATE TABLE Applied_FO
+(
+	Tag_num INT,
+	FO_num INT,
+	Notes VARCHAR(256),
+	Type VARCHAR(20),
+
+	PRIMARY KEY(FO_num),
+	FOREIGN KEY(Tag_num) REFERENCES Tag(Number)
+);
+
+CREATE TABLE Country
+(
+	Name VARCHAR(50),
+	Multiplier FLOAT,
+	
+	PRIMARY KEY(Name)	
+);
+
+CREATE TABLE Product_type
+(
+	Name VARCHAR(50),
+	Multiplier FLOAT,
+	
+	PRIMARY KEY(Name)
+);
+
+CREATE TABLE Groups
+(
+	Id INT,
+	Name VARCHAR(20),
+
+	PRIMARY KEY(Id)
+);
+
+CREATE TABLE Log
+(
+	Username VARCHAR(50),
+	IP_address VARCHAR(45),
+	Machine_name VARCHAR(256),
+	Attempt_date DATETIME,
+	
+	PRIMARY KEY(IP_address, Attempt_date),
+	FOREIGN KEY(Username) REFERENCES User(Id)
+);
+
+CREATE TABLE Price_map
+(
+	Country_name VARCHAR(50),
+	Product_name VARCHAR(50),
+	Tag_num INT,
+	Rev_num INT,
+	Price FLOAT,
+
+	PRIMARY KEY(Country_name, Product_name, Tag_num, Rev_num),
+	FOREIGN KEY(Country_name) REFERENCES Country(Name),
+	FOREIGN KEY(Product_name) REFERENCES Product_type(Name),
+	FOREIGN KEY(Tag_num) REFERENCES Tag(Number),
+	FOREIGN KEY(Rev_num) REFERENCES Tag(Revision)
+);
+
+CREATE TABLE Group_map
+(
+	User_id INT,
+	Group_id INT,
+
+	PRIMARY KEY(User_id, Group_id),
+	FOREIGN KEY(User_id) REFERENCES User(Id),
+	FOREIGN KEY(Group_id) REFERENCES Groups(Id)
+);
+
+CREATE TABLE Price_per_hour
+(
+	Labor FLOAT,
+	Engineering FLOAT
+);
